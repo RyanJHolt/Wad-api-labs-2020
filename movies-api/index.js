@@ -14,11 +14,11 @@ const errHandler = (err, req, res, next) => {
         return res.status(500).send(`Something went wrong!`);
     }
     res.status(500).send(`Hey!! You caught the error 👍👍, ${err.stack} `);
-
-    if (process.env.SEED_DB) {
-        loadUsers().then(console.info);
-    }
 };
+
+if (process.env.SEED_DB) {
+    loadUsers();
+}
 
 const app = express();
 
