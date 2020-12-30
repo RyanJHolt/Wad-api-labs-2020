@@ -40,7 +40,6 @@ router.put('/:id',  (req, res) => {
         _id: req.params.id,
     }, req.body, {
         upsert: false,
-    })
-        .then(user => res.json(200, user));
+    });
 });
 export default router;
