@@ -1,14 +1,15 @@
 import express from 'express';
 import User from './userModel';
 import jwt from 'jsonwebtoken';
+import movieModel from "../movies/movieModel";
 
 const router = express.Router(); // eslint-disable-line
 
 // Get all users
 router.get('/:userName/favourites', (req, res, next) => {
-    const user = req.params.userName;
-    User.find( {username: user}).then(
-        user => res.status(201).send(user.favourites)
+    const userName = req.params.userName;
+    User.findByUserName(userName).populate('favourites').then(
+        user => res.status(201).json(user.favourites)
     ).catch(next);
 });
 
@@ -45,6 +46,17 @@ router.post('/', async (req, res, next) => {
             }
         });
     }
+});
+
+//Add a favourite. No Error Handling Yet. Can add duplicates too!
+router.post('/:userName/favourites', async (req, res, next) => {
+    const newFavourite = req.body.id;
+    const userName = req.params.userName;
+    const movie = await movieModel.findByMovieDBId(newFavourite);
+    const user = await User.findByUserName(userName);
+    await user.favourites.push(movie._id);
+    await user.save();
+    res.status(201).json(user);
 });
 
 
